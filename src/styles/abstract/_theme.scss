@@ -1,0 +1,61 @@
+@use 'sass:list';
+@use 'colors';
+
+// CSS custom properties, not plain Sass variables, are the whole point here: they let a
+// runtime `data-theme` attribute (see ThemeService) override the OS `prefers-color-scheme`
+// default without duplicating every color rule in every component.
+@mixin light-theme {
+  --color-bg: #{colors.$bg};
+  --color-surface: #{colors.$surface};
+  --color-border: #{colors.$border};
+  --color-text-primary: #{colors.$text-primary};
+  --color-text-secondary: #{colors.$text-secondary};
+  --color-text-muted: #{colors.$text-muted};
+
+  --color-primary: #{colors.$primary};
+  --color-primary-ink: #{colors.$primary-ink};
+  --color-pink: #{colors.$pink};
+  --color-pink-bg: #{colors.$pink-bg};
+  --color-category-blue: #{colors.$category-blue};
+
+  --color-positive: #{colors.$positive};
+  --color-negative: #{colors.$negative};
+  --color-stale: #{colors.$stale};
+  --color-stale-bg: #{colors.$stale-bg};
+
+  --color-shadow: #{colors.$shadow};
+  --color-shadow-thumb: 0 1px 3px rgba(0, 0, 0, 0.15);
+
+  --color-category-1: #{list.nth(colors.$category-colors, 1)};
+  --color-category-2: #{list.nth(colors.$category-colors, 2)};
+  --color-category-3: #{list.nth(colors.$category-colors, 3)};
+  --color-category-4: #{list.nth(colors.$category-colors, 4)};
+}
+
+@mixin dark-theme {
+  --color-bg: #{colors.$dark-bg};
+  --color-surface: #{colors.$dark-surface};
+  --color-border: #{colors.$dark-border};
+  --color-text-primary: #{colors.$dark-text-primary};
+  --color-text-secondary: #{colors.$dark-text-secondary};
+  --color-text-muted: #{colors.$dark-text-muted};
+
+  --color-primary: #{colors.$dark-primary};
+  --color-primary-ink: #{colors.$dark-primary-ink};
+  --color-pink: #{colors.$dark-pink};
+  --color-pink-bg: #{colors.$dark-pink-bg};
+  --color-category-blue: #{colors.$dark-category-blue};
+
+  --color-positive: #{colors.$dark-positive};
+  --color-negative: #{colors.$dark-negative};
+  --color-stale: #{colors.$dark-stale};
+  --color-stale-bg: #{colors.$dark-stale-bg};
+
+  --color-shadow: #{colors.$dark-shadow};
+  --color-shadow-thumb: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  --color-category-1: #{list.nth(colors.$dark-category-colors, 1)};
+  --color-category-2: #{list.nth(colors.$dark-category-colors, 2)};
+  --color-category-3: #{list.nth(colors.$dark-category-colors, 3)};
+  --color-category-4: #{list.nth(colors.$dark-category-colors, 4)};
+}

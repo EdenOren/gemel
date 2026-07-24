@@ -1,0 +1,11 @@
+@use 'abstract/variables' as variables;
+
+.compare-by-path {
+  &__hint {
+    color: var(--color-text-muted);
+  }
+
+  &__error {
+    color: var(--color-negative);
+  }
+}

@@ -1,0 +1,40 @@
+@use 'base/reset';
+@use 'abstract/variables' as variables;
+@use 'abstract/theme';
+
+:root {
+  color-scheme: light dark;
+  @include theme.light-theme;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    @include theme.dark-theme;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  @include theme.dark-theme;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  @include theme.light-theme;
+}
+
+body {
+  font-family: variables.$font-family;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}

@@ -1,0 +1,53 @@
+@if (renderedGroups().length === 0) {
+  <p class="comparison-table__empty">אין תוצאות להצגה.</p>
+} @else {
+  @for (group of renderedGroups(); track group.id) {
+    <div class="comparison-table__group">
+      <h3 class="comparison-table__group-title">{{ group.title }}</h3>
+
+      @if (group.rows.length === 0) {
+        <p class="comparison-table__empty">אין תוצאות עבור הבחירה הזו.</p>
+      } @else {
+        <div class="comparison-table__scroll">
+          <table class="comparison-table__table">
+            <thead>
+              <tr>
+                <th class="comparison-table__name-col" scope="col">קרן</th>
+                @for (column of columns(); track column.periodType) {
+                  <th scope="col">
+                    {{ column.label }}
+                    @if (column.resolvedLabel) {
+                      <span class="comparison-table__col-sub">{{ column.resolvedLabel }}</span>
+                    }
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of group.rows; track row.id) {
+                <tr [class.comparison-table__row--empty]="!row.hasAnyData">
+                  <th class="comparison-table__name-col" scope="row">
+                    <span class="comparison-table__name">{{ row.primaryLabel }}</span>
+                    <span class="comparison-table__secondary">{{ row.secondaryLabel }}</span>
+                  </th>
+                  @for (period of row.periods; track period.periodType) {
+                    <td [class.comparison-table__cell--wilt]="period.isWilt">
+                      @if (period.value === null) {
+                        <span class="comparison-table__missing">—</span>
+                      } @else {
+                        <span class="comparison-table__number">{{ period.value }}%</span>
+                        @if (period.isStale) {
+                          <span class="comparison-table__stale" [title]="'נתון מ-' + period.valuePeriod">ישן</span>
+                        }
+                      }
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+}

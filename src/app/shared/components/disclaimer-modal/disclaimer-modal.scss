@@ -1,0 +1,107 @@
+@use 'abstract/variables' as variables;
+
+.disclaimer-modal {
+  padding: 0;
+  border: none;
+  border-radius: variables.$radius-lg;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  max-width: min(520px, calc(100vw - #{variables.$space-lg * 2}));
+  max-height: min(80vh, 640px);
+
+  &::backdrop {
+    background: rgba(20, 18, 12, 0.45);
+  }
+
+  // Entrance animation via @starting-style — progressive enhancement, browsers without
+  // support just show/hide instantly, no functional loss.
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s variables.$ease-bounce,
+    display 0.2s allow-discrete,
+    overlay 0.2s allow-discrete;
+  opacity: 1;
+  transform: scale(1);
+
+  &:not([open]) {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  @starting-style {
+    &[open] {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.disclaimer-modal__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+}
+
+.disclaimer-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: variables.$space-md;
+  padding: variables.$space-md variables.$space-lg;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.disclaimer-modal__title {
+  margin: 0;
+  font-size: variables.$font-size-md;
+  font-weight: 800;
+}
+
+.disclaimer-modal__close {
+  display: grid;
+  place-items: center;
+  width: variables.$badge-size-md;
+  height: variables.$badge-size-md;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  transition: background 0.15s ease;
+
+  svg {
+    width: variables.$icon-size-sm;
+    height: variables.$icon-size-sm;
+  }
+
+  &:hover {
+    background: var(--color-bg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+.disclaimer-modal__body {
+  overflow-y: auto;
+  padding: variables.$space-lg;
+  display: flex;
+  flex-direction: column;
+  gap: variables.$space-sm-md;
+  font-size: variables.$font-size-base;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+
+  p {
+    margin: 0;
+  }
+}
+
+.disclaimer-modal__lead {
+  font-size: variables.$font-size-md;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}

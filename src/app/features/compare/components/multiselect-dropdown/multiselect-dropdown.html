@@ -1,0 +1,85 @@
+<button
+  type="button"
+  class="multiselect-dropdown__trigger"
+  [class.multiselect-dropdown__trigger--selected]="selectedCount() > 0"
+  aria-haspopup="true"
+  [attr.aria-expanded]="isOpen()"
+  (click)="toggleOpen()"
+>
+  @if (selectedCount() === 0) {
+    <span class="multiselect-dropdown__text">{{ label() }}</span>
+  } @else {
+    <span class="multiselect-dropdown__chips" #chipsRow [attr.title]="tooltipText()">
+      @for (option of visibleChips(); track option.id) {
+        <span class="multiselect-dropdown__chip">{{ option.label }}</span>
+      }
+      @if (hiddenChipCount() > 0) {
+        <span class="multiselect-dropdown__chip">+{{ hiddenChipCount() }}</span>
+      }
+    </span>
+  }
+  <svg class="multiselect-dropdown__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</button>
+
+<!--
+  Off-screen mirror of every selected chip, used purely to measure real rendered widths
+  (same classes/font as the visible chips) so the trigger can compute how many fit before
+  ever painting the real row — see computeVisibleChipCount() in the component.
+-->
+<div class="multiselect-dropdown__chips-measure" aria-hidden="true">
+  @for (option of selectedOptions(); track option.id) {
+    <span class="multiselect-dropdown__chip" #hiddenChip>{{ option.label }}</span>
+  }
+  <span class="multiselect-dropdown__chip" #hiddenMoreChip
+    >+{{ selectedOptions().length }}</span
+  >
+</div>
+
+@if (isOpen()) {
+  <div class="multiselect-dropdown__menu" role="menu">
+    <div class="multiselect-dropdown__menu-header">
+      <input
+        type="text"
+        class="multiselect-dropdown__search"
+        placeholder="חיפוש…"
+        [value]="searchQuery()"
+        (input)="onSearchInput($event)"
+      />
+      <div class="multiselect-dropdown__menu-actions">
+        @if (filteredOptions().length > 0) {
+          <button type="button" class="multiselect-dropdown__action" (click)="onSelectAll()">בחר הכל</button>
+        }
+        @if (selectedCount() > 0) {
+          <button type="button" class="multiselect-dropdown__action multiselect-dropdown__action--clear" (click)="onClear()">
+            נקה
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="multiselect-dropdown__menu-list">
+      @if (filteredOptions().length === 0) {
+        <p class="multiselect-dropdown__empty">אין תוצאות</p>
+      } @else {
+        @for (item of groupedItems(); track item.option.id) {
+          @if (item.headerLabel) {
+            <p class="multiselect-dropdown__group-header">{{ item.headerLabel }}</p>
+          }
+          <button
+            type="button"
+            class="multiselect-dropdown__item"
+            [class.multiselect-dropdown__item--selected]="isSelected(item.option.id)"
+            role="menuitemcheckbox"
+            [attr.aria-checked]="isSelected(item.option.id)"
+            (click)="toggleOption(item.option.id)"
+          >
+            <span class="multiselect-dropdown__check" aria-hidden="true"></span>
+            {{ item.option.label }}
+          </button>
+        }
+      }
+    </div>
+  </div>
+}

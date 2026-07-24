@@ -1,0 +1,209 @@
+@use 'abstract/variables' as variables;
+
+:host {
+  display: block;
+}
+
+.category-picker {
+  // One modifier class per category-color slot — sets the --pot-color custom property
+  // that every active/icon style below reads from, via `var(--pot-color, var(--color-primary))`,
+  // so categories read as distinct things instead of one hue repeated four times. The same
+  // class name is applied to both the pot buttons and the overflow menu items (see
+  // category-picker.ts), so one rule covers both. --color-category-N itself flips with the
+  // active theme, so this needs no dark-mode override of its own.
+  @for $i from 1 through 4 {
+    &__pot--accent-#{$i} {
+      --pot-color: var(--color-category-#{$i});
+    }
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: variables.$space-sm-md;
+  }
+
+  &__pot {
+    flex: 1 1 140px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 18px 12px 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px 20px 12px 12px;
+    text-align: center;
+    transition:
+      box-shadow 0.18s ease,
+      border-color 0.18s ease;
+
+    &:hover {
+      box-shadow: var(--color-shadow);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    &--active {
+      border-color: var(--pot-color, var(--color-primary));
+      box-shadow: var(--color-shadow);
+    }
+
+    &--more {
+      height: 100%;
+      flex-direction: row;
+      gap: 8px;
+      padding: 14px 16px;
+    }
+  }
+
+  &__pot-icon-wrap {
+    display: grid;
+    place-items: center;
+    width: variables.$badge-size-lg;
+    height: variables.$badge-size-lg;
+    border-radius: 50%;
+    background: var(--color-bg);
+    flex-shrink: 0;
+    transition: background 0.18s variables.$ease-bounce;
+
+    .category-picker__pot--active & {
+      background: color-mix(in srgb, var(--pot-color, var(--color-primary)) 16%, var(--color-surface));
+    }
+
+    .category-picker__pot--more & {
+      width: variables.$badge-size-md;
+      height: variables.$badge-size-md;
+    }
+  }
+
+  &__pot-icon {
+    width: variables.$icon-size-md;
+    height: variables.$icon-size-md;
+    color: var(--color-text-secondary);
+    transition: color 0.18s ease;
+
+    .category-picker__pot--active & {
+      color: var(--pot-color, var(--color-primary));
+    }
+
+    .category-picker__pot--more & {
+      width: variables.$icon-size-sm;
+      height: variables.$icon-size-sm;
+    }
+  }
+
+  &__pot-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    max-width: 100%;
+    font-size: variables.$font-size-sm;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    line-height: 1.25;
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    .category-picker__pot--active & {
+      color: var(--color-text-primary);
+    }
+
+    .category-picker__pot--more & {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__chevron {
+    width: variables.$icon-size-xs;
+    height: variables.$icon-size-xs;
+    flex-shrink: 0;
+    margin-inline-start: auto;
+    color: var(--color-text-muted);
+  }
+
+  &__more {
+    position: relative;
+    display: flex;
+    flex: 1 1 140px;
+    // Without this, the "more" trigger's own auto min-width is driven by its nowrap
+    // label's full (unwrapped) text width once a long hidden category is selected —
+    // it refuses to shrink and grows past its flex-basis, squeezing the other pots.
+    min-width: 0;
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    min-width: 220px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: variables.$radius-lg;
+    box-shadow: var(--color-shadow);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 20;
+  }
+
+  &__menu-item {
+    display: flex;
+    align-items: center;
+    gap: variables.$space-sm-md;
+    width: 100%;
+    padding: 9px 10px;
+    border-radius: variables.$radius-md;
+    font-size: variables.$font-size-sm;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-align: start;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: var(--color-bg);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: -2px;
+    }
+
+    // Active relies on weight + a background tint, not just a color swap on text: a
+    // hue shift alone is a weak (and colorblind-unfriendly) signal, and the accent
+    // colors themselves don't clear 4.5:1 for text this size.
+    &--active {
+      font-weight: 800;
+      background: color-mix(in srgb, var(--pot-color, var(--color-primary)) 12%, var(--color-surface));
+    }
+  }
+
+  &__menu-item-icon {
+    width: variables.$icon-size-sm;
+    height: variables.$icon-size-sm;
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+
+    .category-picker__menu-item--active & {
+      color: var(--pot-color, var(--color-primary));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__pot,
+    &__pot-icon-wrap,
+    &__pot-icon {
+      transition: none;
+    }
+  }
+}

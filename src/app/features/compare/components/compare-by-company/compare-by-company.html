@@ -1,0 +1,17 @@
+<div class="compare-by-company__results" [appHoldLastHeight]="facade.isLoading()">
+  @if (!facade.hasSelection()) {
+    <p class="compare-by-company__hint">בחרו חברה אחת או יותר כדי להשוות תשואות בין מסלולים.</p>
+  } @else if (facade.isLoading()) {
+    <p class="compare-by-company__hint">טוען השוואה…</p>
+  } @else if (facade.isError()) {
+    <p class="compare-by-company__error">לא ניתן היה לטעון את נתוני ההשוואה. נסו שוב.</p>
+  } @else if (facade.selection.viewMode() === ViewMode.Table) {
+    <app-comparison-table
+      [groups]="facade.resultGroups()"
+      [periodTypes]="facade.selection.selectedPeriodTypes()"
+      [sortDirection]="facade.selection.sortDirection()"
+    />
+  } @else {
+    <app-comparison-bed [groups]="facade.resultGroups()" [sortDirection]="facade.selection.sortDirection()" />
+  }
+</div>

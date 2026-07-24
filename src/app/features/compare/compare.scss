@@ -1,0 +1,246 @@
+@use 'abstract/variables' as variables;
+
+.compare {
+  max-width: 1100px;
+  margin: 0 auto;
+  // top padding reserves room for the fixed corner header (see &__header) instead of
+  // the header occupying flow space, so the tab panel sits close to the viewport top
+  padding: 76px variables.$space-lg variables.$space-xl;
+  display: flex;
+  flex-direction: column;
+  gap: variables.$space-lg;
+
+  // Fixed to the top-right corner (inset-inline-start in this RTL app), mirroring the
+  // theme toggle button pinned to the opposite (top-left) corner, so it reads as a
+  // compact wordmark rather than a full-width banner pushing the panel down.
+  &__header {
+    position: fixed;
+    top: variables.$space-md;
+    inset-inline-start: variables.$space-lg;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: variables.$space-2xs;
+    max-width: min(60vw, 320px);
+    text-align: start;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: variables.$space-xs;
+  }
+
+  &__logo {
+    flex-shrink: 0;
+    border-radius: variables.$radius-sm;
+  }
+
+  &__title {
+    font-size: variables.$font-size-lg;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: variables.$font-size-sm;
+    color: var(--color-text-secondary);
+  }
+
+  // the tab bar and the content card are one visual unit — tabs sit flush on top of
+  // the card, full width, like browser tabs opening onto the page beneath them
+  &__panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  &__tab {
+    padding: variables.$space-md variables.$space-md;
+    // Deliberately not --color-bg: that's the page's own background, so an unselected
+    // tab painted with it would be visually indistinguishable from the page behind it —
+    // this tints it a shade darker so it still reads as its own control.
+    background: color-mix(in srgb, var(--color-border) 40%, var(--color-bg));
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    font-size: variables.$font-size-md;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    transition:
+      color 0.15s ease,
+      background 0.15s ease;
+
+    &:first-child {
+      border-start-start-radius: variables.$radius-lg;
+    }
+
+    &:last-child {
+      border-start-end-radius: variables.$radius-lg;
+    }
+
+    &:hover {
+      color: var(--color-text-primary);
+    }
+
+    &:active {
+      background: color-mix(in srgb, var(--color-primary) 8%, var(--color-bg));
+    }
+
+    &:focus-visible {
+      position: relative;
+      z-index: 2;
+      outline: 2px solid var(--color-primary);
+      outline-offset: -2px;
+    }
+
+    &--active {
+      position: relative;
+      z-index: 1;
+      background: var(--color-surface);
+      border-color: var(--color-border);
+      border-bottom: 1px solid var(--color-surface);
+      color: var(--color-text-primary);
+      margin-bottom: -1px;
+    }
+  }
+
+  &__content {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    border-end-start-radius: variables.$radius-lg;
+    border-end-end-radius: variables.$radius-lg;
+    padding: variables.$space-lg;
+    display: flex;
+    flex-direction: column;
+    gap: variables.$space-lg;
+    // Category picker/period switch/filters above don't change size when the mode
+    // switches — only the results block at the end of this flex column does — so this
+    // transition (and the height JS in Compare#onModeChange driving it) now animates
+    // just that actual size change instead of the whole card lurching.
+    transition: height 0.3s variables.$ease-bounce;
+
+    // overflow is only clipped while the JS-driven height transition is running (see
+    // Compare#onModeChange) — at rest it must stay visible so dropdown menus inside
+    // (category picker "עוד", multiselect) can pop out past the card's edge.
+    &--animating {
+      overflow: hidden;
+    }
+  }
+
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: variables.$space-sm-md;
+  }
+
+  // Sort direction and view mode are both view preferences, not per-group controls, so
+  // they sit once above the repeated result groups rather than inside
+  // comparison-bed/comparison-table themselves.
+  &__result-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: variables.$space-sm-md;
+    flex-wrap: wrap;
+  }
+
+  // A single switch (segmented control), not two independent buttons — same visual
+  // language as app-yield-switch: one shared track, the active side gets its own
+  // surface + shadow instead of a border, so it reads as one control with two states.
+  &__view-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 3px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: variables.$radius-md;
+  }
+
+  &__sort-icon {
+    transition: transform 0.15s ease;
+
+    &--asc {
+      transform: scaleY(-1);
+    }
+  }
+
+  &__view-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: variables.$radius-pill;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: variables.$font-size-xs;
+    font-weight: 700;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease,
+      background 0.15s ease;
+
+    svg {
+      width: variables.$icon-size-sm;
+      height: variables.$icon-size-sm;
+      flex-shrink: 0;
+    }
+
+    &:not(:disabled):hover {
+      color: var(--color-text-primary);
+      border-color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    &--active {
+      border-color: var(--color-primary);
+      background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+      color: var(--color-primary);
+    }
+
+    // Sort has no meaning until there's at least one selected result to sort — matches
+    // the hint-text state the results area is already in at that point.
+    &:disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+  }
+
+  // Segments of the view-mode switch: flat within the shared track (no border of their
+  // own — the track supplies it), active side highlighted the same way as
+  // app-yield-switch's active option.
+  &__view-toggle &__view-btn {
+    justify-content: center;
+    border: none;
+    border-radius: variables.$radius-sm;
+    background: transparent;
+
+    &--active {
+      background: var(--color-surface);
+      box-shadow: var(--color-shadow-thumb);
+      border: none;
+    }
+  }
+
+  &__view-btn-label {
+    @media (max-width: variables.$breakpoint-sm) {
+      display: none;
+    }
+  }
+}

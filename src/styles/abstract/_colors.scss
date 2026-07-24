@@ -1,0 +1,60 @@
+// Single source of truth for every color in the app — components read these via
+// `colors.$name`, nothing hardcodes a hex value inline. Light = "Fresh Market" (bright
+// green anchor, warm neutral ground); dark = "Night Exchange" (near-black ground, neon
+// green anchor) — the two directions chosen after comparing concepts as an artifact.
+//
+// Every text/background pair clears WCAG 2.1 AA (4.5:1 body text, 3:1 large/bold UI
+// text and icons), checked against both $surface and $bg since text sits on either
+// depending on context. See the light-theme comments below for why $text-secondary and
+// $text-muted are as dark as they are.
+
+$bg: #faf7ef;
+$surface: #ffffff;
+$border: #e7e0cf;
+$text-primary: #241f16; // ~15.6:1 on $surface
+$text-secondary: #5c5344; // ~6.4:1 on $surface, ~5.7:1 on $bg
+$text-muted: #6b6152; // ~5.2:1 on $surface, ~4.7:1 on $bg — still meaningful body text, so it holds the same AA floor as $text-secondary, not a lighter "decorative" tone
+
+$primary: #2fb84f; // brand green — icons, borders, fills; not used as body text (~3.6:1, icon/large-UI only)
+$primary-ink: #ffffff;
+$amber: #9c620e; // ~5.0:1 on $surface — safe for text (stale badge, "selected" filter state)
+$amber-bg: #fbecd2;
+$pink: #c33f57; // ~5.0:1 on $surface — safe for text (negative values)
+$pink-bg: #fbe1e6;
+
+// A second brand-adjacent hue, used only for the category-picker's icon rotation
+// (green / blue / coral / gold) so categories read as distinct things instead of one
+// hue repeated — icon-only use, so it only needs to clear 3:1, not 4.5:1.
+$category-blue: #2b6f99;
+$category-colors: $primary, $category-blue, $pink, $amber;
+
+$positive: $primary;
+$negative: $pink;
+$stale: $amber;
+$stale-bg: $amber-bg;
+
+$shadow: 0 10px 26px -14px rgba(36, 31, 22, 0.35);
+
+$dark-bg: #0f1216;
+$dark-surface: #171b21;
+$dark-border: #2a303a;
+$dark-text-primary: #eef1f6; // ~16.9:1 on $dark-surface
+$dark-text-secondary: #9aa3b2; // ~7.0:1 on $dark-surface
+$dark-text-muted: #a8b0bd; // ~8.2:1 on $dark-surface — lighter than secondary on purpose: in dark mode, lighter means *more* contrast, the inverse of the light theme
+
+$dark-primary: #38c274; // muted green — dimmer than a neon accent but still ~7.5:1 on $dark-surface
+$dark-primary-ink: #08210f;
+$dark-amber: #ffcc66; // ~11.5:1 on $dark-surface
+$dark-amber-bg: #3a2f14;
+$dark-pink: #ff6b81; // ~6.7:1 on $dark-surface
+$dark-pink-bg: #3a1f24;
+
+$dark-category-blue: #22d3ee;
+$dark-category-colors: $dark-primary, $dark-category-blue, $dark-pink, $dark-amber;
+
+$dark-positive: $dark-primary;
+$dark-negative: $dark-pink;
+$dark-stale: $dark-amber;
+$dark-stale-bg: $dark-amber-bg;
+
+$dark-shadow: 0 10px 26px -14px rgba(0, 0, 0, 0.6);

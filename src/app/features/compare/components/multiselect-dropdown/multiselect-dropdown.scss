@@ -1,0 +1,286 @@
+@use 'abstract/variables' as variables;
+
+:host {
+  position: relative;
+  display: flex;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.multiselect-dropdown {
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: variables.$space-sm;
+    width: 100%;
+    padding: variables.$space-sm variables.$space-md;
+    border-radius: variables.$radius-md;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: variables.$font-size-sm;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    // Only hover/focus-visible transition — clicking to open/close must be instant, no
+    // press-bounce or other motion.
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+
+    &:hover {
+      border-color: var(--color-primary);
+      color: var(--color-text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    &--selected {
+      border-color: var(--color-primary);
+      color: var(--color-text-primary);
+    }
+  }
+
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  // No transition here on purpose: opening/closing the menu must never visibly move or
+  // fade these chips (isSelected/pendingIds swap identical content on open, and the
+  // #for loops below track by option id, so nothing even remounts — this just makes sure
+  // a future style change doesn't accidentally introduce a flicker).
+  &__chips {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    gap: 6px;
+  }
+
+  &__chips-measure {
+    position: fixed;
+    top: -9999px;
+    inset-inline-start: -9999px;
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  &__chip {
+    flex-shrink: 0;
+    padding: 2px 9px;
+    border-radius: variables.$radius-pill;
+    font-size: variables.$font-size-xs;
+    font-weight: 700;
+    line-height: 1.6;
+    white-space: nowrap;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  }
+
+  &__chevron {
+    width: variables.$icon-size-xs;
+    height: variables.$icon-size-xs;
+    flex-shrink: 0;
+    transition: transform 0.25s variables.$ease-bounce;
+
+    .multiselect-dropdown__trigger[aria-expanded='true'] & {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    min-width: 260px;
+    max-height: 320px;
+    overflow-y: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: variables.$radius-lg;
+    box-shadow: var(--color-shadow);
+    z-index: 20;
+  }
+
+  // The header has its own padding and lives outside &__menu-list's padded box, flush
+  // with the scrollport's top edge — otherwise the scroll container's own padding leaves
+  // a sliver above the sticky header where scrolled items remain visible underneath it.
+  &__menu-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px 6px 6px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px;
+  }
+
+  &__menu-actions {
+    display: flex;
+    align-items: center;
+    gap: variables.$space-xs;
+  }
+
+  &__search {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 6px 10px;
+    border-radius: variables.$radius-md;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-size: variables.$font-size-sm;
+    font-family: inherit;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+    }
+  }
+
+  &__action {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: variables.$radius-pill;
+    font-size: variables.$font-size-xs;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+    }
+
+    &--clear:hover {
+      color: var(--color-negative);
+    }
+  }
+
+  &__group-header {
+    margin: 0;
+    padding: variables.$space-sm variables.$space-xs variables.$space-2xs;
+    font-size: variables.$font-size-xs;
+    font-weight: 700;
+    color: var(--color-text-muted);
+
+    // The very first header sits flush under the sticky search bar, so it doesn't need
+    // its own top gap the way every later header does to separate it from the group above.
+    &:first-child {
+      padding-top: variables.$space-2xs;
+    }
+  }
+
+  &__empty {
+    margin: 0;
+    padding: variables.$space-sm;
+    font-size: variables.$font-size-sm;
+    color: var(--color-text-muted);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 2px solid transparent;
+    border-radius: variables.$radius-md;
+    font-size: variables.$font-size-sm;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-align: start;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease;
+
+    &:hover {
+      background: var(--color-bg);
+      border-color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: -2px;
+    }
+
+    &--selected {
+      color: var(--color-primary);
+      background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+    }
+  }
+
+  &__check {
+    width: variables.$badge-size-sm;
+    height: variables.$badge-size-sm;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid var(--color-border);
+    background: var(--color-surface);
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    line-height: 1;
+    color: transparent;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease,
+      color 0.15s ease,
+      transform 0.25s variables.$ease-bounce;
+
+    &::before {
+      content: '✓';
+    }
+
+    .multiselect-dropdown__item--selected & {
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+      color: var(--color-primary-ink);
+      transform: scale(1.1);
+    }
+  }
+
+  &__item:active &__check {
+    transform: scale(0.9);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__trigger,
+    &__chevron,
+    &__check {
+      transition: none;
+    }
+
+    &__item--selected &__check {
+      transform: none;
+    }
+  }
+}

@@ -1,0 +1,67 @@
+<div class="category-picker__row" role="group" aria-label="קטגוריית קופה">
+  @for (category of visibleCategories(); track category.id) {
+    <button
+      type="button"
+      class="category-picker__pot {{ accentClassFor(category.id) }}"
+      [class.category-picker__pot--active]="category.id === selectedCategoryId()"
+      (click)="selectVisible(category.id)"
+    >
+      <span class="category-picker__pot-icon-wrap">
+        <svg class="category-picker__pot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path [attr.d]="iconPathFor(category.id)" />
+        </svg>
+      </span>
+      <span class="category-picker__pot-label">{{ category.label }}</span>
+    </button>
+  }
+
+  @if (overflowCategories().length > 0) {
+    <div class="category-picker__more">
+      <button
+        type="button"
+        class="category-picker__pot category-picker__pot--more category-picker__pot--accent-4"
+        [class.category-picker__pot--active]="isOverflowSelected()"
+        aria-haspopup="true"
+        [attr.aria-expanded]="isMoreOpen()"
+        (click)="toggleMore()"
+      >
+        <span class="category-picker__pot-icon-wrap">
+          @if (moreTileIcon(); as icon) {
+            <svg class="category-picker__pot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path [attr.d]="icon" />
+            </svg>
+          } @else {
+            <svg class="category-picker__pot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" />
+              <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+              <circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" />
+            </svg>
+          }
+        </span>
+        <span class="category-picker__pot-label">{{ moreTileLabel() }}</span>
+        <svg class="category-picker__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+
+      @if (isMoreOpen()) {
+        <div class="category-picker__menu" role="menu">
+          @for (category of overflowCategories(); track category.id) {
+            <button
+              type="button"
+              class="category-picker__menu-item {{ accentClassFor(category.id) }}"
+              [class.category-picker__menu-item--active]="category.id === selectedCategoryId()"
+              role="menuitem"
+              (click)="selectOverflow(category.id)"
+            >
+              <svg class="category-picker__menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path [attr.d]="iconPathFor(category.id)" />
+              </svg>
+              {{ category.label }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,123 @@
+@use 'abstract/variables' as variables;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$space-xl - 14px;
+}
+
+.comparison-table {
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$space-sm-md;
+  }
+
+  // Same treatment as comparison-bed's group title, so switching views doesn't change
+  // how groups read.
+  &__group-title {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    width: fit-content;
+    padding-block: 4px;
+    padding-inline: 4px 14px;
+    font-size: variables.$font-size-sm;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-primary);
+  }
+
+  &__scroll {
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    min-width: 420px;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th,
+  td {
+    padding: 8px 10px;
+    text-align: center;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  thead th {
+    font-size: variables.$font-size-xs;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+
+  &__col-sub {
+    display: block;
+    font-weight: 400;
+    color: var(--color-text-muted);
+  }
+
+  &__name-col {
+    padding-inline-start: 4px;
+    text-align: start;
+    font-weight: 400;
+  }
+
+  &__name {
+    display: block;
+    font-size: variables.$font-size-sm;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  &__secondary {
+    display: block;
+    font-size: variables.$font-size-xs;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  &__row--empty {
+    opacity: 0.55;
+  }
+
+  &__number {
+    font-weight: 800;
+    font-size: variables.$font-size-sm;
+    color: var(--color-primary);
+
+    .comparison-table__cell--wilt & {
+      color: var(--color-negative);
+    }
+  }
+
+  &__missing {
+    color: var(--color-text-muted);
+    font-size: variables.$font-size-sm;
+  }
+
+  &__stale {
+    display: inline-block;
+    margin-inline-start: 6px;
+    padding: 1px 6px;
+    border-radius: variables.$radius-pill;
+    background: var(--color-stale-bg);
+    color: var(--color-stale);
+    font-size: variables.$font-size-xs;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__empty {
+    color: var(--color-text-muted);
+    padding: variables.$space-lg 0;
+  }
+}

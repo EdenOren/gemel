@@ -1,0 +1,54 @@
+@if (renderedGroups().length === 0) {
+  <p class="comparison-bed__empty">אין תוצאות להצגה.</p>
+} @else {
+  @for (group of renderedGroups(); track group.id) {
+    <div class="comparison-bed__group">
+      <h3 class="comparison-bed__group-title">{{ group.title }}</h3>
+
+      @if (group.rows.length === 0) {
+        <p class="comparison-bed__empty">אין תוצאות עבור הבחירה הזו.</p>
+      } @else {
+        <ol class="comparison-bed__rows">
+          @for (row of group.rows; track row.id) {
+            @if (row.hasAnyData) {
+              <li class="comparison-bed__row">
+                <span class="comparison-bed__label">
+                  <span class="comparison-bed__name">{{ row.primaryLabel }}</span>
+                  <span class="comparison-bed__secondary">{{ row.secondaryLabel }}</span>
+                </span>
+
+                <div class="comparison-bed__periods">
+                  @for (period of row.periods; track period.periodType) {
+                    <div class="comparison-bed__period" [class.comparison-bed__period--wilt]="period.isWilt">
+                      @if (period.showLabel) {
+                        <span class="comparison-bed__period-label">{{ period.periodLabel }}</span>
+                      }
+                      @if (period.value === null) {
+                        <span class="comparison-bed__missing">אין נתונים לתקופה זאת</span>
+                      } @else {
+                        <span class="comparison-bed__bar">
+                          <span class="comparison-bed__bar-fill" [style.width.%]="period.fillPercent"></span>
+                        </span>
+                        <span class="comparison-bed__value">
+                          <span class="comparison-bed__number">{{ period.value }}%</span>
+                        </span>
+                        @if (period.isStale) {
+                          <span class="comparison-bed__stale" [title]="'נתון מ-' + period.valuePeriod">ישן</span>
+                        }
+                      }
+                    </div>
+                  }
+                </div>
+              </li>
+            } @else {
+              <li class="comparison-bed__row comparison-bed__row--empty">
+                <span class="comparison-bed__name">{{ row.primaryLabel }}</span>
+                <span class="comparison-bed__missing">אין נתונים</span>
+              </li>
+            }
+          }
+        </ol>
+      }
+    </div>
+  }
+}

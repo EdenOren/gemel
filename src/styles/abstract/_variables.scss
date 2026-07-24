@@ -1,0 +1,56 @@
+// Single source of truth for every size in the app, the same principle as
+// _colors.scss: components read `variables.$name`, nothing hardcodes a magic px/rem
+// number inline. Keeps things like "every small utility icon is the same size" and
+// "every count badge is the same height" true by construction instead of by accident.
+
+// ---- radius ----
+$radius-sm: 6px; // small controls: chips' inner check circle, tags
+$radius-md: 10px; // standard cards, switches, dropdown menus
+$radius-lg: 14px; // panel corners, dropdown/overflow menus
+$radius-pill: 999px; // fully-rounded pills and circular badges
+
+// ---- spacing ----
+$space-2xs: 2px;
+$space-xs: 4px;
+$space-sm: 8px;
+$space-sm-md: 10px; // between $space-sm and $space-md — the standard row/filter gap
+// used throughout the compare feature
+$space-md: 16px;
+$space-lg: 24px;
+$space-xl: 40px;
+
+// ---- type scale ----
+// every font-size in the app should be one of these six steps, not a one-off value
+$font-size-xs: 0.8rem; // badges, stale tag, count numerals
+$font-size-sm: 0.95rem; // captions, secondary labels, chip/menu-item text — the most common step
+$font-size-base: 1.02rem; // default UI text — row names, group titles, result values
+$font-size-md: 1.12rem; // tab labels and other emphasized controls
+$font-size-lg: 1.28rem; // subheadings, the corner page title
+$font-size-xl: 2.2rem; // reserved for a future larger display heading (unused today)
+
+// ---- icon scale ----
+// every <svg> icon's width/height should be one of these four steps
+$icon-size-xs: 12px; // chevrons
+$icon-size-sm: 16px; // menu-item icons, "more" kebab icon
+$icon-size-md: 20px; // category pot icons
+$icon-size-lg: 24px; // reserved for a future larger/standalone icon use
+
+// ---- circular badge scale ----
+// count badges, checkbox circles, icon-wrap circles — anywhere a small circle holds a
+// number, checkmark, or icon
+$badge-size-sm: 18px; // count badge, multiselect check circle
+$badge-size-md: 30px; // the "more" category pot's icon-wrap circle
+$badge-size-lg: 38px; // a regular category pot's icon-wrap circle
+
+$font-family:
+  'Assistant',
+  'Segoe UI',
+  system-ui,
+  -apple-system,
+  sans-serif;
+
+$breakpoint-sm: 640px;
+
+// the one spring/bounce curve every selection interaction (switches, chips, checks,
+// pots) animates with, so the whole app feels like one consistent hand drew it
+$ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);

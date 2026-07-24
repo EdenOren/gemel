@@ -1,0 +1,123 @@
+<div class="compare">
+  <header class="compare__header">
+    <div class="compare__brand">
+      <img class="compare__logo" src="favicon.svg" alt="" width="28" height="28" />
+      <h1 class="compare__title">מדד גמל</h1>
+    </div>
+    <p class="compare__subtitle">משווים תשואות. בוחרים חכם.</p>
+  </header>
+
+  <div class="compare__panel">
+    <div class="compare__tabs" role="group" aria-label="השוואה לפי">
+      <button
+        type="button"
+        class="compare__tab"
+        [class.compare__tab--active]="mode() === CompareMode.ByCompany"
+        (click)="onModeChange(CompareMode.ByCompany)"
+      >
+        לפי חברה
+      </button>
+      <button
+        type="button"
+        class="compare__tab"
+        [class.compare__tab--active]="mode() === CompareMode.ByPath"
+        (click)="onModeChange(CompareMode.ByPath)"
+      >
+        לפי מסלול
+      </button>
+    </div>
+
+    <main class="compare__content" #content>
+      <app-category-picker
+        [categories]="selection.categories()"
+        [selectedCategoryId]="selection.selectedCategoryId()"
+        (categoryChange)="onCategoryChange($event)"
+      />
+
+      <app-yield-switch [value]="selection.selectedPeriodTypes()" (valueChange)="onPeriodTypesChange($event)" />
+
+      <div class="compare__filters">
+        <app-multiselect-dropdown
+          [style.order]="mode() === CompareMode.ByPath ? 1 : 2"
+          [label]="mode() === CompareMode.ByPath ? 'מסלול' : 'מסלולים'"
+          [options]="pathOptions()"
+          [selectedIds]="selection.selectedPathIds()"
+          [groupSimilar]="true"
+          (selectionChange)="onPathIdsChange($event)"
+        />
+        <app-multiselect-dropdown
+          [style.order]="mode() === CompareMode.ByPath ? 2 : 1"
+          [label]="mode() === CompareMode.ByPath ? 'חברות' : 'חברה'"
+          [options]="companyOptions()"
+          [selectedIds]="selectedCompanyIdStrings()"
+          (selectionChange)="onCompanyIdsChange($event)"
+        />
+      </div>
+
+      <div class="compare__result-controls">
+        <button
+          type="button"
+          class="compare__view-btn"
+          [attr.aria-pressed]="selection.sortDirection() === SortDirection.Asc"
+          [title]="selection.sortDirection() === SortDirection.Desc ? 'מיון: מהגבוה לנמוך' : 'מיון: מהנמוך לגבוה'"
+          [disabled]="!hasSelection()"
+          (click)="onSortDirectionToggle()"
+        >
+          <svg
+            class="compare__sort-icon"
+            [class.compare__sort-icon--asc]="selection.sortDirection() === SortDirection.Asc"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 6h11M3 12h7M3 18h4" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M18 4v16M18 20l-4-4M18 20l4-4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="compare__view-btn-label">
+            {{ selection.sortDirection() === SortDirection.Desc ? 'גבוה לנמוך' : 'נמוך לגבוה' }}
+          </span>
+        </button>
+
+        <div class="compare__view-toggle" role="group" aria-label="תצוגה">
+          <button
+            type="button"
+            class="compare__view-btn"
+            [class.compare__view-btn--active]="selection.viewMode() === ViewMode.Graph"
+            [attr.aria-pressed]="selection.viewMode() === ViewMode.Graph"
+            title="תצוגת גרף"
+            (click)="onViewModeChange(ViewMode.Graph)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 20V11M12 20V4M20 20V14" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="compare__view-btn-label">גרף</span>
+          </button>
+          <button
+            type="button"
+            class="compare__view-btn"
+            [class.compare__view-btn--active]="selection.viewMode() === ViewMode.Table"
+            [attr.aria-pressed]="selection.viewMode() === ViewMode.Table"
+            title="תצוגת טבלה"
+            (click)="onViewModeChange(ViewMode.Table)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+              <path d="M3.5 9.5h17M9 4.5v15" />
+            </svg>
+            <span class="compare__view-btn-label">טבלה</span>
+          </button>
+        </div>
+      </div>
+
+      @switch (mode()) {
+        @case (CompareMode.ByPath) {
+          <app-compare-by-path />
+        }
+        @case (CompareMode.ByCompany) {
+          <app-compare-by-company />
+        }
+      }
+    </main>
+  </div>
+</div>

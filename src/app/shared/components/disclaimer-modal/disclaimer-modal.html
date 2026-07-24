@@ -1,0 +1,33 @@
+<dialog #dialog class="disclaimer-modal" (click)="onDialogClick($event)">
+  <div class="disclaimer-modal__panel" dir="rtl" lang="he">
+    <header class="disclaimer-modal__header">
+      <h2 class="disclaimer-modal__title">כתב ויתור</h2>
+      <button type="button" class="disclaimer-modal__close" (click)="close()" aria-label="סגירה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="disclaimer-modal__body">
+      <p class="disclaimer-modal__lead">חשוב לדעת</p>
+      <p>
+        מדד גמל מציג נתונים והשוואות של מסלולי חיסכון ממקורות מידע רשמיים, במטרה לעזור
+        לכם להבין טוב יותר את האפשרויות הקיימות.
+      </p>
+      <p>
+        האתר מיועד למידע והשוואה בלבד ואינו מספק ייעוץ פיננסי, שיווק השקעות או המלצה
+        לבחור מסלול, גוף מנהל או מוצר חיסכון מסוים.
+      </p>
+      <p>
+        תשואות עבר אינן מעידות על תשואות עתידיות. בחירת מסלול חיסכון אינה צריכה להתבסס
+        על תשואה בלבד, אלא גם על פרמטרים נוספים כמו רמת סיכון, מדיניות השקעה, מאפייני
+        המסלול, טווח ההשקעה והצרכים האישיים של כל משתמש.
+      </p>
+      <p>
+        המידע באתר עשוי להשתנות מעת לעת, ומומלץ לבדוק את הנתונים העדכניים מול המקורות
+        הרשמיים לפני קבלת החלטות.
+      </p>
+    </div>
+  </div>
+</dialog>

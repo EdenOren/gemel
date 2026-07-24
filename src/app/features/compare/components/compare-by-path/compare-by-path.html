@@ -1,0 +1,19 @@
+<div class="compare-by-path__results" [appHoldLastHeight]="facade.isLoading()">
+  @if (!facade.selection.selectedCategoryId()) {
+    <p class="compare-by-path__hint">בחרו קטגוריה כדי להתחיל.</p>
+  } @else if (!facade.hasSelection()) {
+    <p class="compare-by-path__hint">בחרו מסלול אחד או יותר כדי להשוות תשואות בין חברות.</p>
+  } @else if (facade.isLoading()) {
+    <p class="compare-by-path__hint">טוען השוואה…</p>
+  } @else if (facade.isError()) {
+    <p class="compare-by-path__error">לא ניתן היה לטעון את נתוני ההשוואה. נסו שוב.</p>
+  } @else if (facade.selection.viewMode() === ViewMode.Table) {
+    <app-comparison-table
+      [groups]="facade.resultGroups()"
+      [periodTypes]="facade.selection.selectedPeriodTypes()"
+      [sortDirection]="facade.selection.sortDirection()"
+    />
+  } @else {
+    <app-comparison-bed [groups]="facade.resultGroups()" [sortDirection]="facade.selection.sortDirection()" />
+  }
+</div>
