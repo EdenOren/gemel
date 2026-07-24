@@ -24,7 +24,14 @@
                         <span class="comparison-bed__period-label">{{ period.periodLabel }}</span>
                       }
                       @if (period.value === null) {
-                        <span class="comparison-bed__missing">אין נתונים לתקופה זאת</span>
+                        <span
+                          class="comparison-bed__bar comparison-bed__bar--empty"
+                          [title]="'אין נתונים לתקופה זאת'"
+                        ></span>
+                        <span class="comparison-bed__value">
+                          <span class="comparison-bed__number comparison-bed__number--muted">–</span>
+                        </span>
+                        <span class="comparison-bed__stale comparison-bed__stale--hidden">ישן</span>
                       } @else {
                         <span class="comparison-bed__bar">
                           <span class="comparison-bed__bar-fill" [style.width.%]="period.fillPercent"></span>
@@ -32,9 +39,11 @@
                         <span class="comparison-bed__value">
                           <span class="comparison-bed__number">{{ period.value }}%</span>
                         </span>
-                        @if (period.isStale) {
-                          <span class="comparison-bed__stale" [title]="'נתון מ-' + period.valuePeriod">ישן</span>
-                        }
+                        <span
+                          class="comparison-bed__stale"
+                          [class.comparison-bed__stale--hidden]="!period.isStale"
+                          [title]="period.isStale ? ('נתון מ-' + period.valuePeriod) : null"
+                        >ישן</span>
                       }
                     </div>
                   }

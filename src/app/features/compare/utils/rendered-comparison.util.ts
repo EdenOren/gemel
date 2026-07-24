@@ -77,12 +77,32 @@ function formatMonthlyLabel(valuePeriod: number | null): string {
   return monthName ? `${monthName} ${year}` : (PERIOD_TYPE_LABELS.get(PeriodType.Monthly) ?? 'חודשי');
 }
 
+// Resolved once per render rather than per row: every row in the monthly column shares
+// the same calendar month, so a row with no monthly value still shows e.g. "יוני 2026"
+// instead of falling back to the generic "חודשי" label that other rows in the same
+// column don't show.
+function resolveMonthlyLabel(groups: readonly ComparisonGroupViewModel[]): string {
+  for (const group of groups) {
+    for (const row of group.rows) {
+      const monthly = row.values.find(
+        (value) => value.periodType === PeriodType.Monthly && value.valuePeriod !== null,
+      );
+      if (monthly) {
+        return formatMonthlyLabel(monthly.valuePeriod);
+      }
+    }
+  }
+  return PERIOD_TYPE_LABELS.get(PeriodType.Monthly) ?? 'חודשי';
+}
+
 // Shared by both the graph (comparison-bed) and table (comparison-table) result views so
 // row order, "no data" bucketing, and period labels never drift between the two.
 export function buildRenderedGroups(
   groups: readonly ComparisonGroupViewModel[],
   sortDirection: SortDirection = SortDirection.Desc,
 ): RenderedGroup[] {
+  const monthlyLabel = resolveMonthlyLabel(groups);
+
   return groups.map((group) => {
     // Each period type gets its own bar scale — mixing e.g. ~1% monthly yields with
     // ~30% five-year trailing yields on one shared scale would make the monthly bars
@@ -131,7 +151,7 @@ export function buildRenderedGroups(
             periodType: periodValue.periodType,
             periodLabel:
               periodValue.periodType === PeriodType.Monthly
-                ? formatMonthlyLabel(periodValue.valuePeriod)
+                ? monthlyLabel
                 : (PERIOD_TYPE_LABELS.get(periodValue.periodType) ?? periodValue.periodType),
             showLabel: row.values.length > 1 || periodValue.periodType === PeriodType.Monthly,
             value: periodValue.value,

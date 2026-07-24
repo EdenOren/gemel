@@ -14,12 +14,7 @@
               <tr>
                 <th class="comparison-table__name-col" scope="col">קרן</th>
                 @for (column of columns(); track column.periodType) {
-                  <th scope="col">
-                    {{ column.label }}
-                    @if (column.resolvedLabel) {
-                      <span class="comparison-table__col-sub">{{ column.resolvedLabel }}</span>
-                    }
-                  </th>
+                  <th scope="col">{{ column.label }}</th>
                 }
               </tr>
             </thead>
