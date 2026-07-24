@@ -85,6 +85,10 @@ production API's URL for **Production**, and (if you're running a separate `geme
 instance for testing) a different one for **Preview**. The build fails loudly if it's
 unset, rather than silently shipping the local-dev relative path.
 
+`gemel-api`'s `GEMEL_CORS_ORIGINS` needs the resulting domain(s) added too — the stable
+per-branch alias (`Deployments → a develop deployment → assigned domains`), not the
+random per-deployment URL, since a new one is minted on every push to that branch.
+
 ## Structure
 
 - `core/` — enums, models, and `core/services/data/*` (the only place `httpResource()` /
