@@ -16,6 +16,7 @@ export class CompareByCompanyFacade {
     companyIds: this.selection.selectedCompanyIds(),
     periodTypes: this.selection.selectedPeriodTypes(),
     pathIds: this.selection.selectedPathIds(),
+    categoryPathIds: this.selection.paths().map((path) => path.id),
   }));
 
   private readonly compareGroups = this.comparisonService.byCompanyGroups(this.compareParams);

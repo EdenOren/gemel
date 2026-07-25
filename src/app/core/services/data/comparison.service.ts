@@ -15,6 +15,11 @@ export interface ByCompaniesParams {
   companyIds: readonly number[];
   periodTypes: readonly PeriodType[];
   pathIds: readonly string[];
+  // The company-scoped fetch below returns a company's funds across every category it
+  // operates in, so this is what actually scopes results to the selected category —
+  // `pathIds` (the optional secondary filter) is a further narrowing on top of it, not a
+  // substitute, since it stays empty until the user explicitly picks specific paths.
+  categoryPathIds: readonly string[];
 }
 
 export interface MergedPeriodValue {
@@ -121,7 +126,7 @@ export class ComparisonService {
     return rows$.pipe(
       map((rows) => ({
         status: 'success' as const,
-        groups: this.groupByCompany(rows, params.companyIds, params.pathIds),
+        groups: this.groupByCompany(rows, params.companyIds, params.pathIds, params.categoryPathIds),
       })),
       catchError(() => of({ status: 'error' as const, groups: [] })),
       startWith(LOADING_STATE),
@@ -160,12 +165,15 @@ export class ComparisonService {
     allRows: readonly CachedFundRow[],
     companyIds: readonly number[],
     pathIds: readonly string[],
+    categoryPathIds: readonly string[],
   ): MergedGroup[] {
-    const pathFilter = pathIds.length > 0 ? new Set(pathIds) : null;
+    // The user's explicit path filter is already category-scoped (its options come from
+    // the selected category's path list), so it's a strict subset of categoryPathIds when
+    // present. When empty, fall back to categoryPathIds itself so a company's funds from
+    // *other* categories don't leak into the current category's results.
+    const pathFilter = new Set(pathIds.length > 0 ? pathIds : categoryPathIds);
     return companyIds.map((companyId) => {
-      const rows = allRows.filter(
-        (row) => row.companyId === companyId && (!pathFilter || pathFilter.has(row.pathId)),
-      );
+      const rows = allRows.filter((row) => row.companyId === companyId && pathFilter.has(row.pathId));
       return this.buildGroup(
         String(companyId),
         rows,
