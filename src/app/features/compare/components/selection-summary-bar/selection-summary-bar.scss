@@ -1,0 +1,172 @@
+@use 'abstract/variables' as variables;
+
+// Fixed to the very top, spanning full width. While it's showing, the corner brand and
+// theme toggle are gone (compare.html) — the bar carries its own compact logo at the
+// inline-start and the toggle projected into its inline-end slot.
+:host {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 25;
+  display: block;
+  animation: selection-summary-bar-in 0.25s variables.$ease-bounce;
+}
+
+@keyframes selection-summary-bar-in {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.selection-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: variables.$space-sm-md;
+  padding-block: variables.$space-sm;
+  padding-inline: variables.$space-lg variables.$space-md;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--color-shadow);
+  color: var(--color-text-primary);
+}
+
+// The clickable "scroll back to the selection" region — everything except the toggle.
+.selection-summary-bar__summary {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: variables.$space-sm-md;
+  text-align: start;
+  cursor: pointer;
+  border-radius: variables.$radius-sm;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}
+
+.selection-summary-bar__end {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+// Compact logo that lives at the bar's inline-start, sized to the bar's own text scale
+// so it reads as part of the row rather than a pasted-on corner mark.
+.selection-summary-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: variables.$space-xs;
+  flex-shrink: 0;
+}
+
+.selection-summary-bar__logo {
+  flex-shrink: 0;
+  border-radius: variables.$radius-sm;
+}
+
+.selection-summary-bar__wordmark {
+  font-size: variables.$font-size-sm;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+
+  // The green icon alone still reads as the brand once space gets tight.
+  @media (max-width: variables.$breakpoint-sm) {
+    display: none;
+  }
+}
+
+.selection-summary-bar__mode {
+  font-size: variables.$font-size-sm;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.selection-summary-bar__divider {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.selection-summary-bar__category {
+  font-size: variables.$font-size-sm;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// The one part allowed to shrink and clip — everything else stays legible, the item
+// chips give way first when the viewport is narrow.
+.selection-summary-bar__items {
+  display: flex;
+  align-items: center;
+  gap: variables.$space-xs;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.selection-summary-bar__chip {
+  padding: variables.$space-2xs variables.$space-sm;
+  border-radius: variables.$radius-pill;
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  color: var(--color-primary);
+  font-size: variables.$font-size-xs;
+  font-weight: 700;
+  white-space: nowrap;
+  max-width: 12ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &--more {
+    background: color-mix(in srgb, var(--color-border) 60%, var(--color-surface));
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    max-width: none;
+  }
+}
+
+.selection-summary-bar__periods {
+  display: flex;
+  align-items: center;
+  gap: variables.$space-xs;
+  margin-inline-start: auto;
+  flex-shrink: 0;
+
+  // Below the small breakpoint the mode + category + items already fill the row; the
+  // period pills are the least essential reminder, so they drop out first.
+  @media (max-width: variables.$breakpoint-sm) {
+    display: none;
+  }
+}
+
+.selection-summary-bar__period {
+  padding: variables.$space-2xs variables.$space-sm;
+  border-radius: variables.$radius-pill;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: variables.$font-size-xs;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    animation: none;
+  }
+
+  .selection-summary-bar__summary {
+    transition: none;
+  }
+}

@@ -1,0 +1,45 @@
+<div class="selection-summary-bar">
+  <button
+    type="button"
+    class="selection-summary-bar__summary"
+    aria-label="חזרה לבחירה בראש הדף"
+    (click)="activate.emit()"
+  >
+    <span class="selection-summary-bar__brand">
+      <img class="selection-summary-bar__logo" src="favicon.svg" alt="" width="20" height="20" />
+      <span class="selection-summary-bar__wordmark">מדד גמל</span>
+    </span>
+
+    <span class="selection-summary-bar__divider" aria-hidden="true">·</span>
+    <span class="selection-summary-bar__mode">{{ modeLabel() }}</span>
+
+    @if (categoryLabel()) {
+      <span class="selection-summary-bar__divider" aria-hidden="true">·</span>
+      <span class="selection-summary-bar__category">{{ categoryLabel() }}</span>
+    }
+
+    @if (itemLabels().length > 0) {
+      <span class="selection-summary-bar__divider" aria-hidden="true">·</span>
+      <span class="selection-summary-bar__items">
+        @for (label of visibleItems(); track label) {
+          <span class="selection-summary-bar__chip">{{ label }}</span>
+        }
+        @if (hiddenCount() > 0) {
+          <span class="selection-summary-bar__chip selection-summary-bar__chip--more">+{{ hiddenCount() }}</span>
+        }
+      </span>
+    }
+
+    @if (periodLabels().length > 0) {
+      <span class="selection-summary-bar__periods">
+        @for (period of periodLabels(); track period) {
+          <span class="selection-summary-bar__period">{{ period }}</span>
+        }
+      </span>
+    }
+  </button>
+
+  <span class="selection-summary-bar__end">
+    <ng-content select="[bar-end]" />
+  </span>
+</div>

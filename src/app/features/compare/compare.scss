@@ -137,11 +137,68 @@
     }
   }
 
+  // Groups the category picker, period switch, and filter dropdowns into one observable
+  // block (see #filtersRegion in compare.ts) without changing their spacing — it re-hosts
+  // the same column gap the parent &__content laid them out with.
+  &__filters-region {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$space-lg;
+  }
+
   &__filters {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: variables.$space-sm-md;
+  }
+
+  // Round floating button pinned to the bottom inline-end corner (visually bottom-left in
+  // this RTL app), mirroring the theme toggle's treatment at the top. Shares the
+  // scrolled-past-filters state with the summary bar, so it's only in the DOM while scrolled.
+  &__scroll-top {
+    position: fixed;
+    bottom: variables.$space-lg;
+    inset-inline-end: variables.$space-lg;
+    z-index: 25;
+    display: grid;
+    place-items: center;
+    width: variables.$badge-size-lg;
+    height: variables.$badge-size-lg;
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    box-shadow: var(--color-shadow);
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      transform 0.15s variables.$ease-bounce;
+    animation: compare-scroll-top-in 0.25s variables.$ease-bounce;
+
+    svg {
+      width: variables.$icon-size-md;
+      height: variables.$icon-size-md;
+    }
+
+    &:hover {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    &:active {
+      transform: scale(0.92);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+      animation: none;
+    }
   }
 
   // Sort direction and view mode are both view preferences, not per-group controls, so
@@ -242,5 +299,16 @@
     @media (max-width: variables.$breakpoint-sm) {
       display: none;
     }
+  }
+}
+
+@keyframes compare-scroll-top-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

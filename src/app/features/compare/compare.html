@@ -1,11 +1,17 @@
 <div class="compare">
-  <header class="compare__header">
-    <div class="compare__brand">
-      <img class="compare__logo" src="favicon.svg" alt="" width="28" height="28" />
-      <h1 class="compare__title">מדד גמל</h1>
-    </div>
-    <p class="compare__subtitle">משווים תשואות. בוחרים חכם.</p>
-  </header>
+  <!-- Corner brand + theme toggle belong to the un-scrolled top; once scrolled, the
+       sticky bar takes over both (it carries its own compact logo and the toggle). -->
+  @if (!scrolledPastFilters()) {
+    <app-theme-toggle variant="corner" />
+
+    <header class="compare__header">
+      <div class="compare__brand">
+        <img class="compare__logo" src="favicon.svg" alt="" width="28" height="28" />
+        <h1 class="compare__title">מדד גמל</h1>
+      </div>
+      <p class="compare__subtitle">משווים תשואות. בוחרים חכם.</p>
+    </header>
+  }
 
   <div class="compare__panel">
     <div class="compare__tabs" role="group" aria-label="השוואה לפי">
@@ -28,30 +34,34 @@
     </div>
 
     <main class="compare__content" #content>
-      <app-category-picker
-        [categories]="selection.categories()"
-        [selectedCategoryId]="selection.selectedCategoryId()"
-        (categoryChange)="onCategoryChange($event)"
-      />
-
-      <app-yield-switch [value]="selection.selectedPeriodTypes()" (valueChange)="onPeriodTypesChange($event)" />
-
-      <div class="compare__filters">
-        <app-multiselect-dropdown
-          [style.order]="mode() === CompareMode.ByPath ? 1 : 2"
-          [label]="mode() === CompareMode.ByPath ? 'מסלול' : 'מסלולים'"
-          [options]="pathOptions()"
-          [selectedIds]="selection.selectedPathIds()"
-          [groupSimilar]="true"
-          (selectionChange)="onPathIdsChange($event)"
+      <!-- Everything the sticky summary bar mirrors lives in this region; the observer in
+           compare.ts watches it to know when the real controls have scrolled out of view. -->
+      <div class="compare__filters-region" #filtersRegion>
+        <app-category-picker
+          [categories]="selection.categories()"
+          [selectedCategoryId]="selection.selectedCategoryId()"
+          (categoryChange)="onCategoryChange($event)"
         />
-        <app-multiselect-dropdown
-          [style.order]="mode() === CompareMode.ByPath ? 2 : 1"
-          [label]="mode() === CompareMode.ByPath ? 'חברות' : 'חברה'"
-          [options]="companyOptions()"
-          [selectedIds]="selectedCompanyIdStrings()"
-          (selectionChange)="onCompanyIdsChange($event)"
-        />
+
+        <app-yield-switch [value]="selection.selectedPeriodTypes()" (valueChange)="onPeriodTypesChange($event)" />
+
+        <div class="compare__filters">
+          <app-multiselect-dropdown
+            [style.order]="mode() === CompareMode.ByPath ? 1 : 2"
+            [label]="mode() === CompareMode.ByPath ? 'מסלול' : 'מסלולים'"
+            [options]="pathOptions()"
+            [selectedIds]="selection.selectedPathIds()"
+            [groupSimilar]="true"
+            (selectionChange)="onPathIdsChange($event)"
+          />
+          <app-multiselect-dropdown
+            [style.order]="mode() === CompareMode.ByPath ? 2 : 1"
+            [label]="mode() === CompareMode.ByPath ? 'חברות' : 'חברה'"
+            [options]="companyOptions()"
+            [selectedIds]="selectedCompanyIdStrings()"
+            (selectionChange)="onCompanyIdsChange($event)"
+          />
+        </div>
       </div>
 
       <div class="compare__result-controls">
@@ -120,4 +130,22 @@
       }
     </main>
   </div>
+
+  @if (scrolledPastFilters()) {
+    <app-selection-summary-bar
+      [modeLabel]="modeLabel()"
+      [categoryLabel]="categoryLabel()"
+      [itemLabels]="summaryItemLabels()"
+      [periodLabels]="periodLabels()"
+      (activate)="scrollToTop()"
+    >
+      <app-theme-toggle bar-end variant="bar" />
+    </app-selection-summary-bar>
+
+    <button type="button" class="compare__scroll-top" aria-label="חזרה לראש הדף" (click)="scrollToTop()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      </svg>
+    </button>
+  }
 </div>

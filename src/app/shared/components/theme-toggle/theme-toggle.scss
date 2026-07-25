@@ -1,0 +1,71 @@
+@use 'abstract/variables' as variables;
+
+// Shared interactive base for both variants — placement and chrome differ per variant
+// below, but the icon sizing, hover tint, focus ring, and reduced-motion opt-out are
+// common.
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-secondary);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s variables.$ease-bounce;
+
+  svg {
+    width: variables.$icon-size-md;
+    height: variables.$icon-size-md;
+  }
+
+  &:hover {
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Corner variant — the standalone fixed round button pinned top inline-end (visually
+// top-left in this RTL app). Kept byte-for-byte the same as the previous global
+// `.app-theme-toggle` in app.scss so nothing about the un-scrolled corner changes; the
+// e2e suite also selects it by this class.
+.app-theme-toggle {
+  position: fixed;
+  top: variables.$space-md;
+  inset-inline-end: variables.$space-md;
+  z-index: 30;
+  width: variables.$badge-size-lg;
+  height: variables.$badge-size-lg;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--color-shadow);
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+// Bar variant — flat inline icon button that sits inside the sticky summary bar's
+// inline-end slot (where the old scroll-up arrow used to be). No fixed positioning, no
+// round surface/border/shadow; it's just the icon on the bar's own background.
+.theme-toggle--bar {
+  width: variables.$badge-size-md;
+  height: variables.$badge-size-md;
+  border: none;
+  background: transparent;
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
