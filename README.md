@@ -53,9 +53,39 @@ ng test           # unit tests
 npm run test:e2e  # Playwright E2E, against a live gemel-api
 ```
 
-Deploys to Vercel from `main` (production) and any other branch (preview), with
-`API_BASE_URL` injected per-environment at build time — see `scripts/write-prod-environment.mjs`.
+## Deploy (Vercel)
 
-## Related
+The Vercel project is connected to this repo with `main` as the Production Branch — a
+push to `main` auto-deploys to production, and a push to any other branch (e.g.
+`develop`) auto-deploys as its own Preview URL. That's Vercel's native branch model, so
+there's nothing extra to configure for the two environments themselves.
 
-- [`gemel-api`](https://github.com/EdenOren/gemel-api) — the FastAPI backend this app talks to.
+What *is* project-specific: `ng build`'s `production` configuration bakes `apiBaseUrl`
+into the bundle at build time (see `src/environments/environment.ts`), and that file
+defaults to a relative `/api/v1` path that only makes sense behind a reverse proxy —
+which Vercel, a static host, doesn't provide. `npm run build:vercel` (the project's
+Vercel Build Command, set in `vercel.json`) runs `scripts/write-prod-environment.mjs`
+first, which overwrites `environment.ts` with whatever `API_BASE_URL` is set to for the
+environment currently building.
+
+So before the first deploy, set `API_BASE_URL` in the Vercel dashboard (Project →
+Settings → Environment Variables), scoped separately per Environment — e.g. the
+production API's URL for **Production**, and (if you're running a separate `gemel-api`
+instance for testing) a different one for **Preview**. The build fails loudly if it's
+unset, rather than silently shipping the local-dev relative path.
+
+`gemel-api`'s `GEMEL_CORS_ORIGINS` needs the resulting domain(s) added too — the stable
+per-branch alias (`Deployments → a develop deployment → assigned domains`), not the
+random per-deployment URL, since a new one is minted on every push to that branch.
+
+## Structure
+
+- `core/` — enums, models, and `core/services/data/*` (the only place `httpResource()` /
+  `HttpClient` are used, per convention).
+- `features/compare/` — the whole product: `compare-by-path` and `compare-by-company`
+  sub-components (each with its own facade owning that mode's filter state), and a shared
+  `comparison-table` dumb component.
+
+No admin/CRUD feature exists here on purpose — the backend persists nothing of its own,
+so there's nothing to manage from this app. Taxonomy corrections (renaming/merging
+investment-path labels) happen by editing `gemel-api/config/taxonomy_overrides.yaml`.
