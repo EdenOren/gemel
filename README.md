@@ -1,67 +1,56 @@
-# Gemel
+<div align="center">
 
-Angular SPA that compares Israeli provident/pension fund (קופות גמל) yields — by
-investment path (see every company's fund on a path like "S&P 500" or "Under 50") or by
-company (see one company's yields across every path it offers). Talks to the
-[`gemel-api`](../gemel-api) backend, which itself has no database of its own — it proxies
-and aggregates live from data.gov.il.
+# Gemel (גמל)
 
-Built on Angular 22: zoneless change detection, standalone components, signals-first
-state, `httpResource()` for all reads (this app is entirely read-only — no mutations),
-and a facade-per-feature-component pattern.
+**Compare Israeli provident/pension fund yields, live.**
 
-## Setup
+[![Angular](https://img.shields.io/badge/Angular-22-DD0031?style=flat-square&logo=angular&logoColor=white)](https://angular.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![RxJS](https://img.shields.io/badge/RxJS-7.8-B7178C?style=flat-square&logo=reactivex&logoColor=white)](https://rxjs.dev)
+[![Playwright](https://img.shields.io/badge/E2E-Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white)](https://playwright.dev)
+[![Vitest](https://img.shields.io/badge/Unit-Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://vitest.dev)
+[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=flat-square&logo=vercel)](https://gemel-gold.vercel.app/)
+
+**[Production](https://gemel-gold.vercel.app/)** · **[Development](https://gemel-d3jyr1dv6-edenoren-gmailcoms-projects.vercel.app/)**
+
+</div>
+
+---
+
+Angular SPA that compares קופות גמל yields either **by investment path** (every
+company's fund on a path like "S&P 500") or **by company** (one company's yields across
+every path it offers). Zero backend of its own to worry about — data streams live from
+[data.gov.il](https://data.gov.il) via the [`gemel-api`](https://github.com/EdenOren/gemel-api)
+service.
+
+## Highlights
+
+- ⚡ **Zoneless Angular 22** — signals-first state, standalone components, no `NgModule`
+- 🔌 **`httpResource()`-only data layer** — no manual subscriptions, fully read-only app
+- 🧩 **Facade-per-feature** architecture keeping components thin and testable
+- 📊 Table/graph toggle, searchable multiselects, category picker, light/dark theme
+- ✅ Unit tests (Vitest) + a full Playwright E2E suite run against the live backend
+
+## Tech stack
+
+| Layer | Tools |
+| --- | --- |
+| Framework | Angular 22 (zoneless, standalone, signals) |
+| Language | TypeScript |
+| Data fetching | `httpResource()` / RxJS |
+| Testing | Vitest (unit), Playwright (E2E) |
+| Hosting | Vercel |
+
+## Quick start
 
 ```bash
 npm install
+ng serve          # http://localhost:4200 — expects gemel-api on :8000
 ```
 
-`src/environments/environment.development.ts` points `ng serve` at
-`http://127.0.0.1:8000/api/v1` by default — start `gemel-api` first (see its README) on
-that port, or edit this file to match wherever it's actually running.
-
-## Run
-
 ```bash
-ng serve
-```
-
-Open `http://localhost:4200`. Pick "By investment path" or "By company", choose a path
-or company, and a yield metric — the comparison table loads live from the backend, which
-in turn is pulling straight from data.gov.il.
-
-## Build / test
-
-```bash
-ng build
-ng test        # unit tests (vitest)
-npm run test:e2e   # end-to-end (Playwright) — see below
-```
-
-### End-to-end tests
-
-`e2e/` holds a Playwright suite covering the interactive surface of the compare feature:
-selection persistence across mode switches, the multiselect dropdowns (search, select-all,
-chips), the period multiselect, the graph/table view toggle, the category picker, the
-disclaimer modal, the theme toggle, and the loading-height-hold behavior.
-
-These run against a real, live backend — nothing is mocked, since `gemel-api` itself has
-no database to seed a fixture into (see the top of this file). Assertions therefore check
-structure and behavior ("some item rendered", "the header shows a resolved month") rather
-than exact numbers, since real yield data changes over time. Start `gemel-api` on
-`:8000` first, then:
-
-```bash
-npm run test:e2e       # headless
-npm run test:e2e:ui    # Playwright's interactive UI runner
-```
-
-By default this targets `http://localhost:4200` and will launch `ng serve` there itself if
-nothing's listening yet (`reuseExistingServer` picks up an already-running one). If port
-4200 is taken by something else on your machine, point it elsewhere:
-
-```bash
-E2E_PORT=4201 npm run test:e2e
+ng test           # unit tests
+npm run test:e2e  # Playwright E2E, against a live gemel-api
 ```
 
 ## Deploy (Vercel)
