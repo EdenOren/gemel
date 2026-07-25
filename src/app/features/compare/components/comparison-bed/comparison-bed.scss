@@ -109,6 +109,10 @@
     overflow: hidden;
   }
 
+  &__bar--empty {
+    opacity: 0.5;
+  }
+
   &__bar-fill {
     display: block;
     height: 100%;
@@ -132,10 +136,9 @@
   }
 
   &__value {
-    flex: 0 0 auto;
+    flex: 0 0 48px;
     display: flex;
     justify-content: flex-end;
-    min-width: 48px;
   }
 
   &__number {
@@ -147,6 +150,10 @@
 
     .comparison-bed__period--wilt & {
       color: var(--color-negative);
+    }
+
+    &--muted {
+      color: var(--color-text-muted);
     }
   }
 
@@ -167,6 +174,10 @@
     font-size: variables.$font-size-xs;
     font-weight: 700;
     white-space: nowrap;
+
+    &--hidden {
+      visibility: hidden;
+    }
   }
 
   &__empty {

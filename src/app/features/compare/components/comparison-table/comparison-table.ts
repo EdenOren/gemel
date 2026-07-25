@@ -13,9 +13,6 @@ const PERIOD_TYPE_LABELS = new Map<PeriodType, string>(
 interface ColumnDef {
   periodType: PeriodType;
   label: string;
-  // A resolved sub-label (e.g. the real month behind "חודשי") pulled from whichever row
-  // actually has data for this column — shown under the generic header when it differs.
-  resolvedLabel?: string;
 }
 
 @Component({
@@ -43,10 +40,8 @@ export class ComparisonTable {
       .flatMap((row) => row.periods);
 
     return this.periodTypes().map((periodType) => {
-      const label = PERIOD_TYPE_LABELS.get(periodType) ?? periodType;
-      const resolved = allPeriods.find((period) => period.periodType === periodType && period.value !== null)
-        ?.periodLabel;
-      return { periodType, label, resolvedLabel: resolved && resolved !== label ? resolved : undefined };
+      const resolved = allPeriods.find((period) => period.periodType === periodType)?.periodLabel;
+      return { periodType, label: resolved ?? PERIOD_TYPE_LABELS.get(periodType) ?? periodType };
     });
   });
 }

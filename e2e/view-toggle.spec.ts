@@ -46,12 +46,12 @@ test.describe('graph / table view toggle', () => {
     await expect(page.locator('.comparison-table__table tbody tr')).toHaveCount(graphRowCount);
   });
 
-  test('table header shows the resolved month, not just the generic period label', async ({ page }) => {
+  test('table header shows the resolved month only, never the generic period label', async ({ page }) => {
     await setViewMode(page, 'טבלה');
 
     const header = page.locator('.comparison-table__table thead th').nth(1);
-    await expect(header).toContainText('חודשי');
-    await expect(header.locator('.comparison-table__col-sub')).toBeVisible();
+    await expect(header).not.toContainText('חודשי');
+    await expect(header).toHaveText(/^[א-ת]+ \d{4}$/);
   });
 
   test('switching back to graph view restores the bars', async ({ page }) => {
